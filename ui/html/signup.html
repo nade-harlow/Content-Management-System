@@ -1,0 +1,25 @@
+{{ template "header.html"}}
+    <div class="w3-card-4 w3-white" style="width: 50%; margin: auto; padding: 10px">
+        <h2>Sign-Up</h2>
+        <hr>
+            <form class="w3-container" action="./form" method="post">
+
+                <h3><label class="w3-text"><b>First Name</b></label></h3>
+                <input class="w3-input w3-border" type="text" placeholder="Enter first name" name="fname" style="width:auto;"><br>
+
+                <h3><label class="w3-text"><b>Last Name</b></label></h3>
+                <input class="w3-input w3-border" type="text" placeholder="Enter last name" name="lname" style="width:40%;"><br>
+
+                <h3><label class="w3-text"><b>Email</b></label></h3>
+                <input class="w3-input w3-border" type="text" placeholder="Email" name="title" style="width:40%;"><br>
+
+                <h3><label class="w3-text"><b>Password</b></label></h3>
+                <input class="w3-input w3-border" type="password" placeholder="" name="pword" style="width:40%;"><br>
+
+                <h3><label class="w3-text"><b>Re-Password</b></label></h3>
+                <input class="w3-input w3-border" type="password" placeholder="" name="rpword" style="width:40%;"><br>
+
+                <button class="w3-btn w3-black">Submit</button>
+            </form>
+    </div>
+{{template "footer.html"}}
