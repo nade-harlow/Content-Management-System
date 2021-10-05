@@ -32,16 +32,10 @@ func SignUpForm(c *gin.Context) {
 	email := c.PostForm("email")
 	pword := c.PostForm("pword")
 	rpword := c.PostForm("rpword")
-	helper.VerifyEmpty(fname, lname, c)
-	//if fname == "" {
-	//	c.String(400, "Invalid first name")
-	//	return
-	//}
-	//if lname == "" {
-	//	c.String(400, "Invalid last name")
-	//	return
-	//}
 
+	//checks empty string
+	helper.VerifyEmpty(fname, lname, c)
+	// checks if email is valid
 	VerfiedEmail := helper.IsEmailValid(email, c)
 
 	var v models.User
@@ -53,7 +47,6 @@ func SignUpForm(c *gin.Context) {
 	if len(pword) < 6 || len(rpword) < 6 {
 		c.String(400, "password must contain at least six characters!")
 		return
-		//c.String(400, "password must contain at least six characters!\n")
 	}
 	if pword != rpword {
 		c.String(400, "password mismatched\n")
@@ -95,6 +88,7 @@ func LoginForm(c *gin.Context) {
 	email := c.PostForm("email")
 	pword := c.PostForm("pword")
 
+	helper.SetCookie(c)
 	//dbM := models.DbModel{}
 	//dbM.LoginHandler(user.Email, user.Password, c)
 
@@ -107,27 +101,33 @@ func LoginForm(c *gin.Context) {
 		c.String(406, "wrong username and password")
 		return
 	}
-
-	c.String(200, "Login successful!")
+	//c.String(200, "Login successful!", )
+	c.Redirect(302, "/user")
 }
 
-func AddPost(c *gin.Context) {
-	var post models.Post
-	err := c.BindJSON(&post)
-	if err != nil {
-		log.Println(err)
-		return
-	}
+func CreatePost(c *gin.Context) {
+	c.HTML(200, "createpost.html", nil)
+}
 
-	stmt, err := Db.Prepare(fmt.Sprintf("INSERT INTO posts(id, title, boby, time_created, user_id) VALUES(?, ?, ?, ?)"))
+func CreatePostProcess(c *gin.Context) {
+	title := c.PostForm("title")
+	body := c.PostForm("body")
+	helper.VerifyEmptyString(title, body, c)
+
+	stmt, err := Db.Prepare(fmt.Sprintf("INSERT INTO posts(id, title, boby, time_created, user_id) VALUES(?, ?, ?, ?,?)"))
 	if err != nil {
 		log.Println(err.Error())
 		return
 	}
-	post.Id = "ad01eefe-aaad-45b1-b5ce-2a2b1e53b92c"
-	post.TimeCreated = time.Now().Format(time.RFC850)
+	var post = models.Post{
+		Id:          uuid.New().String(),
+		Title:       title,
+		Body:        body,
+		TimeCreated: time.Now().Format(time.RFC850),
+		UserId:      "ad01eefe-aaad-45b1-b5ce-2a2b1e53b92c",
+	}
 
-	res, err := stmt.Exec(post.Id, post.Title, post.Body, post.TimeCreated)
+	res, err := stmt.Exec(post.Id, post.Title, post.Body, post.TimeCreated, post.UserId)
 	if err != nil {
 		log.Println(err.Error())
 		return
@@ -137,50 +137,33 @@ func AddPost(c *gin.Context) {
 		log.Println(err.Error())
 		return
 	}
-	c.JSON(200, gin.H{"message": "Okay"})
-	//if post.Title == "" {
-	//	c.JSON(400, log.Println(err.Error())
-	//		returngin.H{"message":"enter title fields"})
-	//	//c.Redirect(302, "...")
-	//}
-	//if post.Body == "" {
-	//	//http.Error(w, "Enter Content field", 301)
-	//	c.JSON(400, gin.H{"message":"enter body field"})
-	//	//c.Redirect(302, "...")
-	//} else {
-	//	log.Println(post.Body,post.Title)
-	//	add := models.Post{
-	//		Id:      uuid.New().String(),
-	//		Title:   post.Title,
-	//		Body: 	 post.Body,
-	//		TimeCreated:    time.Now().Format(time.RFC850),
-	//	}
-	//	//
-	//	//statement:= `INSERT INTO posts (id, title, body, time_created) VALUE (?,?,?,?)`
-	//	//
-	//
-	//	stmt, er := Db.Prepare("INSERT INTO posts (id, title, body, time_created) VALUES (?,?,?,?)")
-	//	if er != nil{
-	//		log.Println(err)
-	//		c.JSON(500, gin.H{"message": "can't insert post to database "})
-	//		return
-	//	}
-	//
-	//	//defer stmt.Close()
-	//
-	//	fmt.Println("copied")
-	//	_, errr := stmt.Exec(add.Id, add.Title, add.Body, add.TimeCreated)
-	//	fmt.Println("i got here")
-	//
-	//	if errr != nil {
-	//		log.Println("unable to insert data ", er)
-	//		c.JSON(500, gin.H{"message":"unable to insert data"})
-	//
-	//	}else {
-	//
-	//		c.JSON(200, gin.H{"message":"post uploaded successfully"})
-	//	}
+	c.String(200, "Post added successfully")
+	c.Redirect(302, "/user")
 
-	//c.Redirect(302,"")
+}
 
+func User(c *gin.Context) {
+	c.HTML(200, "userpage.html", nil)
+}
+
+func GetPost(c *gin.Context) {
+	rows, err := Db.Query("select * from posts")
+	if err != nil {
+		log.Println(err.Error())
+		c.Status(500)
+		return
+	}
+	defer rows.Close()
+	var row []models.Post
+	for rows.Next() {
+		var r models.Post
+		err = rows.Scan(&r.Id, &r.Title, &r.Body, &r.TimeCreated, &r.UserId)
+		if err != nil {
+			log.Println(err.Error())
+			c.Status(500)
+			return
+		}
+		row = append(row, r)
+	}
+	c.HTML(200, "userpage.html", row)
 }
