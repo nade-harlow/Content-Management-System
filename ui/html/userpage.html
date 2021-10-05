@@ -1,0 +1,27 @@
+{{ template "header.html" }}
+
+{{range .}}
+
+<div class="w3-row">
+
+    <!-- Blog entries -->
+    <div class="w3-col12">
+        <!-- Blog entry -->
+        <div class="w3-card-4 w3-margin w3-white">
+
+            <div class="w3-container">
+                <h3><b>{{.Title}}</b></h3><h5> <span class="w3-opacity">{{.TimeCreated}}</span></h5>
+                <hr>
+            </div>
+
+            <div class="w3-container">
+                <p style="margin: 5px; font-size: large">{{.Body}}</p>
+
+            </div>
+        </div>
+    </div>
+
+{{end}}
+
+
+{{ template "footer.html" }}
