@@ -5,6 +5,7 @@ type Post struct {
 	Title       string `json:"title"`
 	Body        string `json:"body"`
 	TimeCreated string `json:"time_created"`
+	UserId      string `json:"user_id"`
 	//Likes int `json:"likes"`
 }
 
