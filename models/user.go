@@ -3,7 +3,6 @@ package models
 import (
 	"database/sql"
 	"github.com/gin-gonic/gin"
-	"github.com/nade-harlow/WeekEightTask/Village-square/controllers/handlers"
 	"log"
 )
 
@@ -66,19 +65,19 @@ func (db *DbModel) LoginHandler(email, password string, c *gin.Context) {
 
 }
 
-func CreateUsers(ctx *gin.Context, a, b, c, d, e, f string) {
-
-	stmt, err := handlers.Db.Prepare("INSERT INTO users (id, first_name, last_name, email, password, time_created) VALUE (?,?,?,?,?,?)")
-	defer stmt.Close()
-	if err != nil {
-		log.Println(err.Error())
-		return
-	}
-	_, err = stmt.Exec(a, b, c, d, e, f)
-	//log.Println(user.TimeCreated)
-	if err != nil {
-		log.Println(err.Error())
-		ctx.String(400, "unable to insert data")
-		return
-	}
-}
+//func CreateUsers(ctx *gin.Context, a, b, c, d, e, f string) {
+//
+//	stmt, err := handlers.Db.Prepare("INSERT INTO users (id, first_name, last_name, email, password, time_created) VALUE (?,?,?,?,?,?)")
+//	defer stmt.Close()
+//	if err != nil {
+//		log.Println(err.Error())
+//		return
+//	}
+//	_, err = stmt.Exec(a, b, c, d, e, f)
+//	//log.Println(user.TimeCreated)
+//	if err != nil {
+//		log.Println(err.Error())
+//		ctx.String(400, "unable to insert data")
+//		return
+//	}
+//}
