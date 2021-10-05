@@ -1,0 +1,22 @@
+{{ template "header.html"}}
+<div class="w3-card-4 w3-white" style="width: 50%; margin: auto; padding: 10px">
+    <h2>Create Post</h2>
+    <hr>
+
+    <form class="w3-container" action="./createpost/form" method="post">
+
+        <h3><label class="w3-text"><b>Title</b></label></h3>
+        <input class="w3-input w3-border" type="text" placeholder="Title" name="title" style="width:40%;"><br>
+
+        <h3><label class="w3-text"><b>Content</b></label></h3>
+        <textarea class="w3-input w3-border" placeholder="Enter text here..." name="body" style=" height:300px; padding: 12px; border: 1px solid #ccc; border-radius: 4px;resize: vertical;"></textarea><br>
+
+        <button class="w3-btn w3-black">Submit</button>
+
+    </form>
+
+
+
+</div>
+
+{{ template "footer.html"}}
