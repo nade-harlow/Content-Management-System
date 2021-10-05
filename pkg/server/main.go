@@ -19,10 +19,12 @@ func main() {
 	r.LoadHTMLGlob("./ui/html/*")
 
 	r.GET("/", handlers.SignUp)
+	r.GET("/createpost", handlers.CreatePost)
+	r.POST("/createpost/form", handlers.CreatePostProcess)
 	r.POST("/form", handlers.SignUpForm)
 	r.GET("/login", handlers.Login)
 	r.POST("/login/form", handlers.LoginForm)
-	r.POST("/add", handlers.AddPost)
+	r.GET("/user", handlers.GetPost)
 	er := r.Run()
 	if er != nil {
 		return
