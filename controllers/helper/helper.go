@@ -2,7 +2,6 @@ package helper
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/google/uuid"
 	"log"
 	"net/http"
 	"regexp"
@@ -11,9 +10,9 @@ import (
 var DbSessions = map[string]string{}
 var UserDb = map[string]string{}
 
-func SetCookie(c *gin.Context) {
-	sId := uuid.New().String()
-	cookie, err := c.Cookie("")
+func SetCookie(c *gin.Context, id string) {
+	sId := id
+	cookie, err := c.Cookie("session")
 	if err != nil {
 		cookie = "not set"
 		c.SetCookie("session", sId, 3600, "/user", "localhost", true, true)
