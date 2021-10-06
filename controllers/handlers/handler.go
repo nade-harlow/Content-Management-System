@@ -77,6 +77,7 @@ func SignUpForm(c *gin.Context) {
 		}
 	}
 	c.String(200, "signup successfully")
+	c.Redirect(302, "/home")
 
 }
 
@@ -88,21 +89,22 @@ func LoginForm(c *gin.Context) {
 	email := c.PostForm("email")
 	pword := c.PostForm("pword")
 
-	helper.SetCookie(c)
-	//dbM := models.DbModel{}
-	//dbM.LoginHandler(user.Email, user.Password, c)
-
 	Db.QueryRow("select * from users where email= ?", email).Scan(&user.UserId, &user.FirstName, &user.LastName, &user.Email, &user.Password, &user.TimeCreated)
 
 	er := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(pword))
-	log.Println(user.Password, pword)
 	if er != nil {
 		log.Println("wrong username and password: ", er)
 		c.String(406, "wrong username and password")
 		return
 	}
-	//c.String(200, "Login successful!", )
-	c.Redirect(302, "/user")
+	c.SetCookie("session", user.UserId, 3600, "/", "localhost", false, true)
+
+	c.Redirect(302, "/post/home")
+}
+
+func Logout(c *gin.Context) {
+	c.SetCookie("session", "", -1, "/", "localhost", false, true)
+	c.Redirect(302, "/post/login")
 }
 
 func CreatePost(c *gin.Context) {
@@ -110,6 +112,8 @@ func CreatePost(c *gin.Context) {
 }
 
 func CreatePostProcess(c *gin.Context) {
+	id, _ := c.Get("userId")
+	newId := id.(string)
 	title := c.PostForm("title")
 	body := c.PostForm("body")
 	helper.VerifyEmptyString(title, body, c)
@@ -124,7 +128,7 @@ func CreatePostProcess(c *gin.Context) {
 		Title:       title,
 		Body:        body,
 		TimeCreated: time.Now().Format(time.RFC850),
-		UserId:      "ad01eefe-aaad-45b1-b5ce-2a2b1e53b92c",
+		UserId:      newId,
 	}
 
 	res, err := stmt.Exec(post.Id, post.Title, post.Body, post.TimeCreated, post.UserId)
@@ -138,12 +142,16 @@ func CreatePostProcess(c *gin.Context) {
 		return
 	}
 	c.String(200, "Post added successfully")
-	c.Redirect(302, "/user")
+	c.Redirect(302, "/post/home")
 
 }
 
 func User(c *gin.Context) {
-	c.HTML(200, "userpage.html", nil)
+	uu, err := c.Cookie(user.UserId)
+	if err != nil {
+		log.Println(err.Error())
+	}
+	c.HTML(200, "Userpage.html", uu)
 }
 
 func GetPost(c *gin.Context) {
@@ -165,5 +173,5 @@ func GetPost(c *gin.Context) {
 		}
 		row = append(row, r)
 	}
-	c.HTML(200, "userpage.html", row)
+	c.HTML(200, "Home.html", row)
 }
