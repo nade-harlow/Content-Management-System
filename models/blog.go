@@ -4,6 +4,9 @@ type Post struct {
 	Id          string `json:"id"`
 	Title       string `json:"title"`
 	Body        string `json:"body"`
+	FirstName   string `json:"first_name"`
+	LastName    string `json:"last_name"`
+	Access      int    `json:"access"`
 	TimeCreated string `json:"time_created"`
 	UserId      string `json:"user_id"`
 	//Likes int `json:"likes"`
