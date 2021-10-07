@@ -9,27 +9,27 @@ import (
 func Routes(r *gin.Engine) {
 
 	userRouter := r.Group("/")
-	userRouter.Use(middleware.CheckLogin())
+	//userRouter.Use(middleware.CheckLogin())
 	{
-		userRouter.GET("/login", middleware.CheckNotLogedin(), handlers.Login)
+		//userRouter.GET("/login", middleware.CheckNotLogedin(), handlers.Login)
 		userRouter.GET("/signup", middleware.CheckNotLogedin(), handlers.SignUp)
 		userRouter.POST("/form", middleware.CheckNotLogedin(), handlers.SignUpForm)
 		userRouter.POST("/login/form", middleware.CheckNotLogedin(), handlers.LoginForm)
 	}
 
-	loog := r.Group("/")
-	loog.Use(middleware.CheckNotLogedin())
-	{
-		//loog.GET("/logout", handlers.Logout)
-		//loog.GET("/login", middleware.CheckNotLogedin(),handlers.Login)
-	}
-
+	r.GET("/login", middleware.CheckNotLogedin(), handlers.Login)
 	postRouter := r.Group("/post")
 	postRouter.Use(middleware.CheckLogin())
 	{
 		postRouter.GET("/logout", handlers.Logout)
 		postRouter.GET("/home", handlers.GetPost)
-		postRouter.GET("/pro", handlers.User)
+		postRouter.GET("/home/:Id", handlers.VeiwPost)
+		postRouter.GET("/user", handlers.UserPage)
+		postRouter.GET("/delete/:Id", handlers.DeletePost)
+		postRouter.GET("/edit/:Id", handlers.EditPost)
+		postRouter.POST("/edit/process/:Id", handlers.EditPostProcess)
+		//postRouter.GET("/home/post", handlers.VeiwPost)
+		//postRouter.GET("/pro", handlers.User)
 		postRouter.GET("/createpost", handlers.CreatePost)
 		postRouter.POST("/createpost/form", handlers.CreatePostProcess)
 	}
