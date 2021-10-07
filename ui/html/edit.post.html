@@ -1,0 +1,30 @@
+{{ template "header.html"}}
+{{ template "nav.user.html"}}
+
+<br>
+<div class="w3-card-4 w3-white" style="width: 50%; margin: auto; padding: 10px">
+    <h2>Update Post</h2>
+    <hr>
+    <form class="w3-container" action="/post/edit/process/{{.Id}}" method="post">
+
+        <h3><label class="w3-text"><b>Title</b></label></h3>
+        <input class="w3-input w3-border" type="text" placeholder="Title" value="{{.Title}}" name="title" style="width:40%;"><br>
+
+        <h3><label class="w3-text"><b>Content</b></label></h3>
+        <textarea class="w3-input w3-border" placeholder="Enter text here..." name="body" style=" height:300px; padding: 12px; border: 1px solid #ccc; border-radius: 4px;resize: vertical;">{{.Body}}</textarea><br>
+
+        <h3><label class="w3-text"><b>Post access</b></label></h3>
+        <select name="access" class="form-control">
+            <option value="0" >Public</option>
+            <option value="1">Private</option>
+        </select><br><br>
+
+        <button class="w3-btn w3-black">Submit</button>
+
+    </form>
+
+
+
+</div>
+
+{{ template "footer.html"}}
