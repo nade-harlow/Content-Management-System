@@ -11,6 +11,7 @@ import (
 	"golang.org/x/crypto/bcrypt"
 	"log"
 	"net/http"
+	"strconv"
 	"time"
 )
 
@@ -76,8 +77,7 @@ func SignUpForm(c *gin.Context) {
 			return
 		}
 	}
-	c.String(200, "signup successfully")
-	c.Redirect(302, "/home")
+	c.Redirect(302, "/post/home")
 
 }
 
@@ -104,7 +104,7 @@ func LoginForm(c *gin.Context) {
 
 func Logout(c *gin.Context) {
 	c.SetCookie("session", "", -1, "/", "localhost", false, true)
-	c.Redirect(302, "/post/login")
+	c.Redirect(302, "/login")
 }
 
 func CreatePost(c *gin.Context) {
@@ -116,9 +116,11 @@ func CreatePostProcess(c *gin.Context) {
 	newId := id.(string)
 	title := c.PostForm("title")
 	body := c.PostForm("body")
+	auth := c.PostForm("access")
+	access, _ := strconv.Atoi(auth)
 	helper.VerifyEmptyString(title, body, c)
 
-	stmt, err := Db.Prepare(fmt.Sprintf("INSERT INTO posts(id, title, boby, time_created, user_id) VALUES(?, ?, ?, ?,?)"))
+	stmt, err := Db.Prepare(fmt.Sprintf("INSERT INTO posts(id, title, boby, time_created, user_id, access) VALUES(?, ?, ?,?, ?,?)"))
 	if err != nil {
 		log.Println(err.Error())
 		return
@@ -127,11 +129,12 @@ func CreatePostProcess(c *gin.Context) {
 		Id:          uuid.New().String(),
 		Title:       title,
 		Body:        body,
+		Access:      access,
 		TimeCreated: time.Now().Format(time.RFC850),
 		UserId:      newId,
 	}
 
-	res, err := stmt.Exec(post.Id, post.Title, post.Body, post.TimeCreated, post.UserId)
+	res, err := stmt.Exec(post.Id, post.Title, post.Body, post.TimeCreated, post.UserId, post.Access)
 	if err != nil {
 		log.Println(err.Error())
 		return
@@ -141,21 +144,11 @@ func CreatePostProcess(c *gin.Context) {
 		log.Println(err.Error())
 		return
 	}
-	c.String(200, "Post added successfully")
 	c.Redirect(302, "/post/home")
-
-}
-
-func User(c *gin.Context) {
-	uu, err := c.Cookie(user.UserId)
-	if err != nil {
-		log.Println(err.Error())
-	}
-	c.HTML(200, "Userpage.html", uu)
 }
 
 func GetPost(c *gin.Context) {
-	rows, err := Db.Query("select * from posts")
+	rows, err := Db.Query("SELECT posts.id, posts.title, posts.boby, posts.time_created, posts.user_id, posts.access, users.first_name, users.last_name FROM posts INNER JOIN users ON posts.user_id = users.id;")
 	if err != nil {
 		log.Println(err.Error())
 		c.Status(500)
@@ -165,7 +158,7 @@ func GetPost(c *gin.Context) {
 	var row []models.Post
 	for rows.Next() {
 		var r models.Post
-		err = rows.Scan(&r.Id, &r.Title, &r.Body, &r.TimeCreated, &r.UserId)
+		err = rows.Scan(&r.Id, &r.Title, &r.Body, &r.TimeCreated, &r.UserId, &r.Access, &r.FirstName, &r.LastName)
 		if err != nil {
 			log.Println(err.Error())
 			c.Status(500)
@@ -174,4 +167,68 @@ func GetPost(c *gin.Context) {
 		row = append(row, r)
 	}
 	c.HTML(200, "Home.html", row)
+}
+
+func VeiwPost(c *gin.Context) {
+	id := c.Param("Id")
+	var p models.Post
+	Db.QueryRow("SELECT * FROM posts WHERE id= ?", id).Scan(&p.Id, &p.Title, &p.Body, &p.TimeCreated, &p.UserId, &p.Access)
+	c.HTML(200, "veiwpost.html", p)
+}
+
+func UserPage(c *gin.Context) {
+	id, _ := c.Get("userId")
+	newId := id.(string)
+
+	result, err := Db.Query("SELECT * FROM posts WHERE user_id = ?", newId)
+	defer result.Close()
+	if err != nil {
+		log.Println(err.Error())
+	}
+	var results []models.Post
+	for result.Next() {
+		var p models.Post
+		err = result.Scan(&p.Id, &p.Title, &p.Body, &p.TimeCreated, &p.UserId, &p.Access)
+		if err != nil {
+			log.Println(err.Error())
+		}
+		results = append(results, p)
+	}
+	c.HTML(200, "userpage.html", results)
+}
+
+func DeletePost(c *gin.Context) {
+	id := c.Param("Id")
+
+	deletePost, err := Db.Prepare("DELETE FROM posts WHERE id= ?")
+	defer deletePost.Close()
+	if err != nil {
+		log.Println(err.Error())
+	}
+	deletePost.Exec(id)
+	c.Redirect(302, "/post/user")
+}
+
+func EditPost(c *gin.Context) {
+	id := c.Param("Id")
+	var e models.Post
+	Db.QueryRow("SELECT * FROM posts WHERE id=?", id).Scan(&e.Id, &e.Title, &e.Body, &e.TimeCreated, &e.UserId, &e.Access)
+	c.HTML(200, "edit.post.html", e)
+}
+
+func EditPostProcess(c *gin.Context) {
+	id := c.Param("Id")
+
+	title := c.PostForm("title")
+	body := c.PostForm("body")
+	auth := c.PostForm("access")
+	acces, _ := strconv.Atoi(auth)
+	helper.VerifyEmptyString(title, body, c)
+
+	stmt, err := Db.Prepare("UPDATE posts SET title=?, boby=? , access= ? WHERE id=?")
+	if err != nil {
+		log.Println(err.Error())
+	}
+	stmt.Exec(title, body, acces, id)
+	c.Redirect(302, "/post/user")
 }
