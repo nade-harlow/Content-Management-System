@@ -7,5 +7,6 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="w3" level="application" />
     <orderEntry type="library" name="tinymce" level="application" />
+    <orderEntry type="library" name="froala-editor" level="application" />
   </component>
 </module>
