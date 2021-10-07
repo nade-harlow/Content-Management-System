@@ -1,0 +1,40 @@
+{{ template "header.html" }}
+
+{{ template "nav.user.html" }}
+
+<div class="w3-row">
+    <!-- Blog entries -->
+    <div class="w3-col12">
+        <!-- Blog entry -->
+        <div class="w3-card-4 w3-margin w3-white">
+
+                <div class="w3-container">
+                    <h3><b>{{.Title}}</b></h3><h5> <span class="w3-opacity">{{.TimeCreated}}</span></h5>
+                    <hr>
+                </div>
+                <div class="w3-container">
+                    <p style="margin: 5px; font-size: large">{{.Body}}</p>
+
+
+                </div>
+
+        </div>
+        <div class="w3-card-4 w3-white" style="width: 50%; margin: auto; padding: 10px">
+            <h2>Leave a comment</h2>
+            <hr>
+
+            <form class="w3-container" action="./createpost/form" method="post">
+
+                <h3><label class="w3-text"><b>Comment</b></label></h3>
+                <textarea class="w3-input w3-border" id="editor1" placeholder="Enter text here..." name="body" style=" height:300px; padding: 12px; border: 1px solid #ccc; border-radius: 4px;resize: vertical;"></textarea><br>
+
+                <button class="w3-btn w3-black">Submit</button>
+
+            </form>
+        </div>
+    </div>
+
+
+</div>
+
+{{ template "footer.html" }}
