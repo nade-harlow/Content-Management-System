@@ -1,0 +1,34 @@
+{{ template "header.html"}}
+{{ template "nav.user.html"}}
+
+{{range .}}
+<!-- Grid -->
+<div class="w3-row">
+
+    <!-- Blog entries -->
+    <div class="w3-col12">
+        <!-- Blog entry -->
+        <div class="w3-card-4 w3-margin w3-white">
+
+            <div class="w3-container">
+                <h3><b>{{.Title}}</b></h3><h5> <span class="w3-opacity">{{.TimeCreated}}</span></h5>
+                <hr>
+            </div>
+
+            <div class="w3-container">
+                <p style="margin: 5px; font-size: large">{{.Body}}</p>
+                <div class="w3-row">
+                    <div class="w3-col m8 s12">
+                        <ul style="list-style-type: none; padding-left: 0">
+                            <li><a href="/post/edit/{{.Id}}"><button class="w3-button w3-padding-medium w3-white w3-border"><b>EDIT</b></button></a></li>
+                            <li><a href="/post/delete/{{.Id}}"><button class="w3-button w3-padding-medium w3-white w3-border"><b>DELETE</b></button></a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{{end}}
+
+{{ template "footer.html"}}
