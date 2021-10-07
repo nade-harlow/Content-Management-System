@@ -12,7 +12,13 @@
         <input class="w3-input w3-border" type="text" placeholder="Title" name="title" style="width:40%;"><br>
 
         <h3><label class="w3-text"><b>Content</b></label></h3>
-        <textarea class="w3-input w3-border" placeholder="Enter text here..." name="body" style=" height:300px; padding: 12px; border: 1px solid #ccc; border-radius: 4px;resize: vertical;"></textarea><br>
+        <textarea class="w3-input w3-border" id="editor1" placeholder="Enter text here..." name="body" style=" height:300px; padding: 12px; border: 1px solid #ccc; border-radius: 4px;resize: vertical;"></textarea><br>
+
+        <h3><label class="w3-text"><b>Post access</b></label></h3>
+        <select name="access" class="w3-border" style="width: 15%">
+            <option value="0" >Public</option>
+            <option value="1">Private</option>
+        </select><br><br>
 
         <button class="w3-btn w3-black">Submit</button>
 
