@@ -28,8 +28,7 @@ func Routes(r *gin.Engine) {
 		postRouter.GET("/delete/:Id", handlers.DeletePost)
 		postRouter.GET("/edit/:Id", handlers.EditPost)
 		postRouter.POST("/edit/process/:Id", handlers.EditPostProcess)
-		//postRouter.GET("/home/post", handlers.VeiwPost)
-		//postRouter.GET("/pro", handlers.User)
+		postRouter.POST("/comment/:Id", handlers.AddComment)
 		postRouter.GET("/createpost", handlers.CreatePost)
 		postRouter.POST("/createpost/form", handlers.CreatePostProcess)
 	}
