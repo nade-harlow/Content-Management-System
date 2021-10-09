@@ -9,29 +9,43 @@
         <div class="w3-card-4 w3-margin w3-white">
 
                 <div class="w3-container">
-                    <h3><b>{{.Title}}</b></h3><h5> <span class="w3-opacity">{{.TimeCreated}}</span></h5>
+                    <h3><b>{{.post.Title}}</b></h3><h5> <span class="w3-opacity">{{.post.TimeCreated}}</span></h5>
                     <hr>
                 </div>
                 <div class="w3-container">
-                    <p style="margin: 5px; font-size: large">{{.Body}}</p>
+                    <p style="margin: 5px; font-size: large">{{.post.Body}}</p>
 
 
                 </div>
-
         </div>
-        <div class="w3-card-4 w3-white" style="width: 50%; margin: auto; padding: 10px">
-            <h2>Leave a comment</h2>
+            <div class="w3-card-4 w3-margin w3-white">
             <hr>
+            <!--        <div class="w3-card-4 w3-white" style="width: 50%; margin: auto; padding: 10px">-->
+            <div class="w3-container">
+                <h2>Leave a comment</h2>
+            </div>
 
-            <form class="w3-container" action="./createpost/form" method="post">
+            <form class="w3-container" action="/post/comment/{{.post.Id}}" method="post">
 
-                <h3><label class="w3-text"><b>Comment</b></label></h3>
-                <textarea class="w3-input w3-border" id="editor1" placeholder="Enter text here..." name="body" style=" height:300px; padding: 12px; border: 1px solid #ccc; border-radius: 4px;resize: vertical;"></textarea><br>
+
+                <textarea class="w3-input w3-border" placeholder="Enter text here..." name="comment" style=" width: 50%; height:300px; padding: 12px; border: 1px solid #ccc; border-radius: 4px;"></textarea><br>
 
                 <button class="w3-btn w3-black">Submit</button>
 
             </form>
+            <!--        </div>-->
+                <br><hr>
+                <div class="w3-container">
+                    {{with .comment}} {{range $key, $com := .}}
+                    <i style="font-size: 30px" class="fa fa-user"> {{$com.FirstName}} {{$com.LastName}}</i>
+                    <p style="margin: 5px; font-size: large; margin-left: 30px">{{$com.Comments}}</p><br><hr>
+                    {{end}} {{end}}
+
+                </div>
+
         </div>
+    </div>
+
     </div>
 
 
