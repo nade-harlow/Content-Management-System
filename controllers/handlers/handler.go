@@ -169,11 +169,33 @@ func GetPost(c *gin.Context) {
 	c.HTML(200, "Home.html", row)
 }
 
+var m = map[string]interface{}{}
+
 func VeiwPost(c *gin.Context) {
 	id := c.Param("Id")
 	var p models.Post
 	Db.QueryRow("SELECT * FROM posts WHERE id= ?", id).Scan(&p.Id, &p.Title, &p.Body, &p.TimeCreated, &p.UserId, &p.Access)
-	c.HTML(200, "veiwpost.html", p)
+	m["post"] = p
+
+	var comments []models.Comment
+
+	rows, err := Db.Query("select comments.id, comments.commentt, comments.user_id, comments.post_id, comments.time_posted, users.first_name, users.last_name from comments inner join users on comments.user_id = users.id where comments.post_id =?", id)
+	if err != nil {
+		log.Println(err.Error())
+		return
+	}
+	for rows.Next() {
+		var c models.Comment
+		err = rows.Scan(&c.Id, &c.Comments, &c.UserId, &c.PostId, &c.TimeCreated, &c.FirstName, &c.LastName)
+		if err != nil {
+			log.Println(err.Error())
+			return
+		}
+		comments = append(comments, c)
+
+	}
+	m["comment"] = comments
+	c.HTML(200, "veiwpost.html", m)
 }
 
 func UserPage(c *gin.Context) {
@@ -184,6 +206,7 @@ func UserPage(c *gin.Context) {
 	defer result.Close()
 	if err != nil {
 		log.Println(err.Error())
+		return
 	}
 	var results []models.Post
 	for result.Next() {
@@ -191,6 +214,7 @@ func UserPage(c *gin.Context) {
 		err = result.Scan(&p.Id, &p.Title, &p.Body, &p.TimeCreated, &p.UserId, &p.Access)
 		if err != nil {
 			log.Println(err.Error())
+			return
 		}
 		results = append(results, p)
 	}
@@ -204,6 +228,7 @@ func DeletePost(c *gin.Context) {
 	defer deletePost.Close()
 	if err != nil {
 		log.Println(err.Error())
+		return
 	}
 	deletePost.Exec(id)
 	c.Redirect(302, "/post/user")
@@ -228,7 +253,32 @@ func EditPostProcess(c *gin.Context) {
 	stmt, err := Db.Prepare("UPDATE posts SET title=?, boby=? , access= ? WHERE id=?")
 	if err != nil {
 		log.Println(err.Error())
+		return
 	}
 	stmt.Exec(title, body, acces, id)
 	c.Redirect(302, "/post/user")
+}
+
+func AddComment(c *gin.Context) {
+	postId := c.Param("Id")
+	auth, _ := c.Get("userId")
+	Id := auth.(string)
+	comment := c.PostForm("comment")
+
+	stmt, err := Db.Prepare("INSERT INTO comments (id, commentt, user_id, post_id, time_posted) VALUE (?,?,?,?,?)")
+	if err != nil {
+		log.Println(err.Error())
+		return
+	}
+	com := &models.Comment{
+		Id:          uuid.New().String(),
+		Comments:    comment,
+		UserId:      Id,
+		PostId:      postId,
+		TimeCreated: time.Now().Format(time.ANSIC),
+	}
+
+	stmt.Exec(com.Id, com.Comments, com.UserId, com.PostId, com.TimeCreated)
+	c.Redirect(302, "/post/home")
+
 }
