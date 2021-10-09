@@ -4,28 +4,14 @@
 {{range .}}
 {{ if eq 0 .Access}}
 <div class="w3-row">
-
     <!-- Blog entries -->
     <div class="w3-col12">
         <!-- Blog entry -->
         <div class="w3-card-4 w3-margin w3-white">
-
-
                 <div class="w3-container">
-
-                        <a href="/post/home/{{.Id}}"><h3><b>{{.Title}}</b></h3> </a><h5> <span class="w3-opacity">{{.TimeCreated}}</span></h5>
-                        <p>By {{.FirstName}} {{.LastName}}</p>
+                        <a href="/post/home/{{.Id}}"><h3><b>{{.Title}}</b></h3> </a><h5> By {{.FirstName}} {{.LastName}}  <span class="w3-opacity">{{.TimeCreated}}</span></h5>
                         <hr>
-
                 </div>
-
-
-            <div class="w3-row">
-
-                <div  class="w3-col m12 w3-hide-small">
-                    <p><span class="w3-padding-large w3-right"><b>Likes  </b> <span class="w3-badge">1</span></span></p>   <p><span class="w3-padding-large w3-right"><b>Comments  </b> <span class="w3-badge">2</span></span></p>
-                </div>
-            </div>
         </div>
     </div>
 </div>
