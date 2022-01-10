@@ -1,23 +1,31 @@
 package database
 
-import "database/sql"
+import (
+	"database/sql"
+	"fmt"
+	"os"
 
-const (
-	dbDriver = "mysql"
-	dbUser = "root"
-	dbPass = "asdfghjk"
-	dbName = "villagesquare"
+	_ "github.com/lib/pq"
 )
 
-
 func MySqlCon() (db *sql.DB, err error) {
-	db, err = sql.Open(dbDriver, dbUser+":"+dbPass+"@tcp(127.0.0.1:3306)/"+dbName)
-	if err != nil{
+
+	host := os.Getenv("HOST")
+	port := os.Getenv("DB_PORT")
+	user := os.Getenv("DB_USER")
+	password := os.Getenv("DB_PASSWORD")
+	dbname := os.Getenv("DB_NAME")
+
+	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s "+
+		"password=%s dbname=%s sslmode=disable",
+		host, port, user, password, dbname)
+
+	db, err = sql.Open("postgres", psqlInfo)
+	if err != nil {
 		return nil, err
 	}
-	if err:= db.Ping(); err != nil{
+	if err := db.Ping(); err != nil {
 		return nil, err
 	}
 	return db, nil
 }
-
