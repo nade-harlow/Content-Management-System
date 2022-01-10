@@ -17,7 +17,7 @@ func Routes(r *gin.Engine) {
 		userRouter.POST("/login/form", middleware.CheckNotLogedin(), handlers.LoginForm)
 	}
 
-	r.GET("/login", middleware.CheckNotLogedin(), handlers.Login)
+	r.GET("/", middleware.CheckNotLogedin(), handlers.Login)
 	postRouter := r.Group("/post")
 	postRouter.Use(middleware.CheckLogin())
 	{
