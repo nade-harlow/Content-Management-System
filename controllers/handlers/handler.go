@@ -23,6 +23,7 @@ func init() {
 }
 
 func SignUp(c *gin.Context) {
+	helper.Mail()
 	c.HTML(http.StatusOK, "signup.html", nil)
 }
 
