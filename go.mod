@@ -1,5 +1,6 @@
 module github.com/nade-harlow/WeekEightTask/Village-square
 
+// +heroku goVersion go1.17
 go 1.17
 
 require (
