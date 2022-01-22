@@ -20,7 +20,7 @@ jobs:
 
       - name: migration
         run: |
-          migrate -path db/migration -database "postgresql://postgres:postgres@localhost:5432/village-square?sslmode=disable" -verbose up
+          migrate -path db/migration -database "postgres://vysjvbplqhhnkq:a78c377957dbb1342f8e1932f03645a7ec6a8301397ccc14e4169ea05473bedc@ec2-54-170-163-224.eu-west-1.compute.amazonaws.com:5432/dfi5c1hhmnm8k4" -verbose up
 
       - name: Build
         run: go build -v ./...
