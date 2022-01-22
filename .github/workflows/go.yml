@@ -21,6 +21,10 @@ jobs:
       - name: Build
         run: go build -v ./...
 
+      - name: migration
+        run: |
+          migrate -path db/migration -database "postgresql://postgres:postgres@localhost:5432/village-square?sslmode=disable" -verbose up
+
       - uses: akhileshns/heroku-deploy@v3.12.12 # This is the action
         name: Deploy to heroku
         if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/staging' }}
