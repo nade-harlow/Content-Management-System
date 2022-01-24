@@ -102,13 +102,13 @@ func LoginForm(c *gin.Context) {
 		c.String(406, "wrong username and password")
 		return
 	}
-	c.SetCookie("session", user.UserId, 3600, "/", "localhost", false, true)
+	c.SetCookie("session", user.UserId, 3600, "/", "https://village-square.herokuapp.com/", false, true)
 
 	c.Redirect(302, "/post/home")
 }
 
 func Logout(c *gin.Context) {
-	c.SetCookie("session", "", -1, "/", "localhost", false, true)
+	c.SetCookie("session", "", -1, "/", "https://village-square.herokuapp.com/", false, true)
 	c.Redirect(302, "/login")
 }
 
