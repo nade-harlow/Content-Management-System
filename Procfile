@@ -1,1 +1,1 @@
-web:pkg/server/server
+web:village-square
