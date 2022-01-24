@@ -1,1 +1,1 @@
-web:bin/go-getting-started
+web:go run ./... main.go
