@@ -125,7 +125,7 @@ func CreatePostProcess(c *gin.Context) {
 	access, _ := strconv.Atoi(auth)
 	helper.VerifyEmptyString(title, body, c)
 
-	stmt, err := Db.Prepare(fmt.Sprintf("INSERT INTO posts(id, title, boby, time_created, user_id, access) VALUES(?, ?, ?,?, ?,?)"))
+	stmt, err := Db.Prepare(fmt.Sprintf("INSERT INTO posts(id, title, boby, time_created, user_id, access) VALUES($1, $2, $3,$4, $5,$6)"))
 	if err != nil {
 		log.Println(err.Error())
 		return
@@ -179,12 +179,12 @@ var m = map[string]interface{}{}
 func VeiwPost(c *gin.Context) {
 	id := c.Param("Id")
 	var p models.Post
-	Db.QueryRow("SELECT * FROM posts WHERE id= ?", id).Scan(&p.Id, &p.Title, &p.Body, &p.TimeCreated, &p.UserId, &p.Access)
+	Db.QueryRow("SELECT * FROM posts WHERE id= $1", id).Scan(&p.Id, &p.Title, &p.Body, &p.TimeCreated, &p.UserId, &p.Access)
 	m["post"] = p
 
 	var comments []models.Comment
 
-	rows, err := Db.Query("select comments.id, comments.commentt, comments.user_id, comments.post_id, comments.time_posted, users.first_name, users.last_name from comments inner join users on comments.user_id = users.id where comments.post_id =?", id)
+	rows, err := Db.Query("select comments.id, comments.commentt, comments.user_id, comments.post_id, comments.time_posted, users.first_name, users.last_name from comments inner join users on comments.user_id = users.id where comments.post_id =$1", id)
 	if err != nil {
 		log.Println(err.Error())
 		return
@@ -207,7 +207,7 @@ func UserPage(c *gin.Context) {
 	id, _ := c.Get("userId")
 	newId := id.(string)
 
-	result, err := Db.Query("SELECT * FROM posts WHERE user_id = ?", newId)
+	result, err := Db.Query("SELECT * FROM posts WHERE user_id = $1", newId)
 	defer result.Close()
 	if err != nil {
 		log.Println(err.Error())
@@ -242,7 +242,7 @@ func DeletePost(c *gin.Context) {
 func EditPost(c *gin.Context) {
 	id := c.Param("Id")
 	var e models.Post
-	Db.QueryRow("SELECT * FROM posts WHERE id=?", id).Scan(&e.Id, &e.Title, &e.Body, &e.TimeCreated, &e.UserId, &e.Access)
+	Db.QueryRow("SELECT * FROM posts WHERE id=$1", id).Scan(&e.Id, &e.Title, &e.Body, &e.TimeCreated, &e.UserId, &e.Access)
 	c.HTML(200, "edit.post.html", e)
 }
 
@@ -255,7 +255,7 @@ func EditPostProcess(c *gin.Context) {
 	acces, _ := strconv.Atoi(auth)
 	helper.VerifyEmptyString(title, body, c)
 
-	stmt, err := Db.Prepare("UPDATE posts SET title=?, boby=? , access= ? WHERE id=?")
+	stmt, err := Db.Prepare("UPDATE posts SET title=$1, boby=$2 , access= $3 WHERE id=$4")
 	if err != nil {
 		log.Println(err.Error())
 		return
@@ -270,7 +270,7 @@ func AddComment(c *gin.Context) {
 	Id := auth.(string)
 	comment := c.PostForm("comment")
 
-	stmt, err := Db.Prepare("INSERT INTO comments (id, commentt, user_id, post_id, time_posted) VALUE (?,?,?,?,?)")
+	stmt, err := Db.Prepare("INSERT INTO comments (id, commentt, user_id, post_id, time_posted) VALUE ($1,$2,$3,$4,$5)")
 	if err != nil {
 		log.Println(err.Error())
 		return
