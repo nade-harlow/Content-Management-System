@@ -16,7 +16,7 @@ func MySqlCon() (db *sql.DB, err error) {
 	password := os.Getenv("DB_PASSWORD")
 	dbname := os.Getenv("DB_NAME")
 
-	psqlInfo := fmt.Sprintf("host=%s port=%s user=%s "+"password=%s dbname=%s sslmode=disable", host, port, user, password, dbname)
+	psqlInfo := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable", host, port, user, password, dbname)
 
 	db, err = sql.Open("postgres", psqlInfo)
 	if err != nil {
@@ -25,5 +25,6 @@ func MySqlCon() (db *sql.DB, err error) {
 	if err := db.Ping(); err != nil {
 		return nil, err
 	}
+	fmt.Printf("\nSuccessfully connected to database!\n")
 	return db, nil
 }

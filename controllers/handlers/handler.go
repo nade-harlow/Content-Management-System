@@ -41,7 +41,11 @@ func SignUpForm(c *gin.Context) {
 	VerfiedEmail := helper.IsEmailValid(email, c)
 
 	var v models.User
-	Db.QueryRow("SELECT FROM users WHERE email = ?", VerfiedEmail).Scan(&v.UserId, v.FirstName, v.LastName, v.Email, v.Password, v.TimeCreated)
+	err := Db.QueryRow("SELECT FROM users WHERE email = $1", VerfiedEmail).Scan(&v.UserId, v.FirstName, v.LastName, v.Email, v.Password, v.TimeCreated)
+	if err != nil {
+		fmt.Println(err.Error())
+
+	}
 	if VerfiedEmail == v.Email {
 		c.String(400, "Email already exist")
 		return
@@ -64,7 +68,7 @@ func SignUpForm(c *gin.Context) {
 			TimeCreated: time.Now().Format(time.RFC850),
 		}
 
-		stmt, err := Db.Prepare("INSERT INTO users (id, first_name, last_name, email, password, time_created) VALUE (?,?,?,?,?,?)")
+		stmt, err := Db.Prepare("INSERT INTO users (id, first_name, last_name, email, password, time_created) VALUE ($1,$2,$3,$4,$5,$6)")
 		defer stmt.Close()
 		if err != nil {
 			log.Println(err.Error())
@@ -90,7 +94,7 @@ func LoginForm(c *gin.Context) {
 	email := c.PostForm("email")
 	pword := c.PostForm("pword")
 
-	Db.QueryRow("select * from users where email= ?", email).Scan(&user.UserId, &user.FirstName, &user.LastName, &user.Email, &user.Password, &user.TimeCreated)
+	Db.QueryRow("select * from users where email= $1", email).Scan(&user.UserId, &user.FirstName, &user.LastName, &user.Email, &user.Password, &user.TimeCreated)
 
 	er := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(pword))
 	if er != nil {
