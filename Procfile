@@ -1,1 +1,1 @@
-web:village-square
+web:bin/go-getting-started
