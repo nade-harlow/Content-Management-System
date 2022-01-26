@@ -16,7 +16,7 @@ func MySqlCon() (db *sql.DB, err error) {
 	//
 	//psqlInfo := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable", host, port, user, password, dbname)
 
-	db, err = sql.Open("postgres", "postgres://vysjvbplqhhnkq:a78c377957dbb1342f8e1932f03645a7ec6a8301397ccc14e4169ea05473bedc@ec2-54-170-163-224.eu-west-1.compute.amazonaws.com:5432/dfi5c1hhmnm8k4")
+	db, err = sql.Open("postgres", "postgres://zcxydxjqbdeeqe:4d3c5682ea4de184ab2e59f26b5ff9981196ab729e615da5a8d91056198f5c4c@ec2-63-32-7-190.eu-west-1.compute.amazonaws.com:5432/dch1l4n831j80m")
 	if err != nil {
 		return nil, err
 	}
