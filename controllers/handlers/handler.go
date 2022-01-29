@@ -44,7 +44,7 @@ func SignUpForm(c *gin.Context) {
 	err := Db.QueryRow("SELECT FROM users WHERE email = $1", VerfiedEmail).Scan(&v.UserId, v.FirstName, v.LastName, v.Email, v.Password, v.TimeCreated)
 	if err != nil {
 		fmt.Println(err.Error())
-
+		return
 	}
 	if VerfiedEmail == v.Email {
 		c.String(400, "Email already exist")
@@ -68,7 +68,7 @@ func SignUpForm(c *gin.Context) {
 			TimeCreated: time.Now().Format(time.RFC850),
 		}
 
-		stmt, err := Db.Prepare("INSERT INTO users (id, first_name, last_name, email, password, time_created) VALUE ($1,$2,$3,$4,$5,$6)")
+		stmt, err := Db.Prepare("INSERT INTO users (id, first_name, last_name, email, password, time_created) VALUES ($1,$2,$3,$4,$5,$6)")
 		defer stmt.Close()
 		if err != nil {
 			log.Println(err.Error())
@@ -102,13 +102,13 @@ func LoginForm(c *gin.Context) {
 		c.String(406, "wrong username and password")
 		return
 	}
-	c.SetCookie("session", user.UserId, 3600, "/", "https://village-square.herokuapp.com/", false, true)
+	c.SetCookie("session", user.UserId, 3600, "/", "https://village-square.herokuapp.com", false, true)
 
 	c.Redirect(302, "/post/home")
 }
 
 func Logout(c *gin.Context) {
-	c.SetCookie("session", "", -1, "/", "https://village-square.herokuapp.com/", false, true)
+	c.SetCookie("session", "", -1, "/", "https://village-square.herokuapp.com", false, true)
 	c.Redirect(302, "/login")
 }
 
@@ -125,7 +125,7 @@ func CreatePostProcess(c *gin.Context) {
 	access, _ := strconv.Atoi(auth)
 	helper.VerifyEmptyString(title, body, c)
 
-	stmt, err := Db.Prepare(fmt.Sprintf("INSERT INTO posts(id, title, boby, time_created, user_id, access) VALUES($1, $2, $3,$4, $5,$6)"))
+	stmt, err := Db.Prepare(fmt.Sprintf("INSERT INTO posts(id, title, boby, time_created, user_id, access) VALUES ($1, $2, $3,$4, $5,$6)"))
 	if err != nil {
 		log.Println(err.Error())
 		return
@@ -270,7 +270,7 @@ func AddComment(c *gin.Context) {
 	Id := auth.(string)
 	comment := c.PostForm("comment")
 
-	stmt, err := Db.Prepare("INSERT INTO comments (id, commentt, user_id, post_id, time_posted) VALUE ($1,$2,$3,$4,$5)")
+	stmt, err := Db.Prepare("INSERT INTO comments (id, commentt, user_id, post_id, time_posted) VALUES ($1,$2,$3,$4,$5)")
 	if err != nil {
 		log.Println(err.Error())
 		return
